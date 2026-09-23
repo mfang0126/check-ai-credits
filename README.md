@@ -68,9 +68,9 @@ out), secrets are never echoed in any output mode, and there is no telemetry.
 
 | Capability | How it was verified |
 |---|---|
-| Balance semantics correct | Cross-checked against an independent implementation (legacy Python direct-connect scripts) on the same endpoints: DeepSeek balance and DeepInfra spendable/month matched exactly |
+| Balance semantics correct | Cross-checked at release time against an independent implementation (legacy Python direct-connect scripts kept outside this repo) on the same endpoints: DeepSeek balance and DeepInfra spendable/month matched exactly |
 | Trend algorithm | 40 fixture tests cover 7-day least-squares, reset clipping, LOW thresholds (`bun test`) |
-| Endpoint reality | Live-verified against DeepSeek `GET /user/balance` ([platform.deepseek.com](https://platform.deepseek.com)), DeepInfra `/payment/checklist` ([deepinfra.com/dash](https://deepinfra.com/dash)) and the other providers' billing surfaces |
+| Endpoint reality | Live smoke at release time against DeepSeek `GET /user/balance` ([platform.deepseek.com](https://platform.deepseek.com)), DeepInfra `/payment/checklist` ([deepinfra.com/dash](https://deepinfra.com/dash)) and the other providers' billing surfaces |
 | Type safety | TypeScript strict `tsc --noEmit`, zero errors |
 
 ## JSON snapshot schema
@@ -106,9 +106,10 @@ SKILL.md            # skill entry (frontmatter, ≤60-char description)
 src/
   cli.ts            # CLI entry
   types.ts          # unified snapshot schema + Provider interface
-  core/             # env/http/auth/codexbar/trend/log/format
+  core/             # env/http/auth/codexbar/trend/log
   providers/        # one adapter per provider
   registry.ts       # 10-provider registry
+  format.ts         # human-readable output formatting
 test/               # bun:test fixtures (no live API calls)
 docs/MIGRATION.md   # endpoint semantics + unit pitfalls
 README.zh-CN.md     # Chinese version of this file

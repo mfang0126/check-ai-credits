@@ -86,7 +86,7 @@ async function runList(json: boolean): Promise<number> {
 
 async function main(): Promise<number> {
   const args = process.argv.slice(2);
-  if (args.includes("--help") || args.includes("-h") || args.length === 0 && process.stdout.isTTY === false && false) {
+  if (args.includes("--help") || args.includes("-h")) {
     console.log(HELP);
     return 0;
   }

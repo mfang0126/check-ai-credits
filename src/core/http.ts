@@ -1,4 +1,4 @@
-export const USER_AGENT = "check-ai-credits/0.1 (+https://github.com/)";
+export const USER_AGENT = "check-ai-credits/0.1 (+https://github.com/mfang0126/check-ai-credits)";
 
 export type HttpResult = [status: number, body: unknown];
 

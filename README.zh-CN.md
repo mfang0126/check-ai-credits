@@ -78,13 +78,49 @@ SKILL.md            # skill 入口（frontmatter ≤60 字符 description）
 src/
   cli.ts            # CLI 入口
   types.ts          # 统一 snapshot schema + Provider 接口
-  core/             # env/http/auth/codexbar/trend/log/format
+  core/             # env/http/auth/codexbar/trend/log
   providers/        # 每个 provider 一个 adapter
   registry.ts       # 10 provider 注册表
+  format.ts         # 人类可读输出格式化
 test/               # bun:test fixture 单测（不打真 API）
 docs/MIGRATION.md   # 端点语义与单位坑位对照表
 README.zh-CN.md     # 本文档中文版
 ```
+
+## JSON snapshot schema
+
+```jsonc
+{
+  "provider": "deepseek",
+  "source": "api",
+  "timestamp": "2026-09-24T00:00:00.000Z",
+  "currency": "USD",
+  "balance": 12.34,
+  "usedPercent": null,
+  "resetsAt": null,
+  "monthCost": null,
+  "monthPeriod": null,
+  "details": { },     // provider 特有扩展字段
+  "error": null
+}
+```
+
+## 趋势日志
+
+快照默认追加到 `~/.check-ai-credits/log.json`（可用 `$CHECK_AI_CREDITS_LOG`
+覆盖）。`--trend` 在 7 天窗口内做最小二乘烧钱速率拟合、裁掉上次 reset 之前的
+配额序列，并标记低余额（USD 钱包 < 5，或剩余 < 20%）。`--no-log` 跳过追加。
+
+## 开发
+
+```bash
+bun run typecheck   # tsc --noEmit，strict
+bun test            # fixture 单测（不打真 API）
+bun run build       # 单文件二进制
+```
+
+新增 provider = 在 `src/providers/` 写一个实现 `Provider` 接口
+（`detect()` + `fetch()`）的文件，再在 `src/registry.ts` 注册一行。
 
 ## License
 

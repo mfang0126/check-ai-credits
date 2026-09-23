@@ -11,7 +11,7 @@ the legacy Python balance scripts (read-only; never modified by this project).
 | grok | `grok-balance.py` | `src/providers/grok.ts` (credits unit, no USD conversion) | ported (read-only token) |
 | mimo | `mimo-balance.py` | `src/providers/mimo.ts` (MIMO_COOKIE → CodexBar fallback) | ported; Chrome cookie decryption NOT ported (needs keychain → intentionally deferred, fallback covers macOS hosts) |
 | claude/gemini/kimi/openrouter | CodexBar rows in `usage-logger.py` | `codexbarProvider()` factory | ported |
-| apikeyfun | CodexBar plugin in `usage-logger.py` | `src/providers/apikeyfun.ts` | ported |
+| apikeyfun | CodexBar plugin in `usage-logger.py` | `apikeyfunProvider` in `src/providers/codexbar.ts` | ported |
 | logger/trend | `usage-logger.py` | `src/core/log.ts` + `src/core/trend.ts` | ported (7-day least squares, clip-after-reset, LOW flags) |
 
 ## Snapshot schema (kept from Python)

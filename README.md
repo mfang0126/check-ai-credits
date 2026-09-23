@@ -1,5 +1,7 @@
 # check-ai-credits
 
+**English** · [简体中文](README.zh-CN.md)
+
 **Check AI provider credits and balance across 10 providers from one CLI.**
 One command answers "how much credit do I have left?" for DeepSeek, DeepInfra,
 Codex (ChatGPT), Grok, MiMo, Claude, Gemini, Kimi, OpenRouter and the
@@ -13,22 +15,22 @@ apikey.fun relay — with burn trend and estimated days-left.
 ## Install
 
 ```bash
-# from source (requires Bun >= 1.1)
-bun install
-bun run build          # -> dist/check-ai-credits
+# as a skill (any Agent-Skills-compatible agent)
+npx skills add mfang0126/check-ai-credits
 
-# or run directly
-bun src/cli.ts --help
+# from source (requires Bun >= 1.1)
+git clone git@github.com:mfang0126/check-ai-credits.git
+cd check-ai-credits && bun install && bun run build   # -> dist/check-ai-credits
 ```
 
-## Usage
+## 60-second method
 
 ```bash
 check-ai-credits                 # all configured providers
 check-ai-credits deepseek        # one provider
 check-ai-credits --json          # machine-readable snapshots
 check-ai-credits --trend         # burn rate + days-left from logged history
-check-ai-credits --list          # show providers and credential detection
+check-ai-credits --list          # credential detection status per provider
 check-ai-credits deepinfra --models   # per-model month breakdown (DeepInfra)
 ```
 
@@ -36,8 +38,8 @@ check-ai-credits deepinfra --models   # per-model month breakdown (DeepInfra)
 
 | Provider | ID | Credential source (auto-detected) | Metric |
 |---|---|---|---|
-| DeepSeek official | `deepseek` | `DEEPSEEK_API_KEY` (env / `$HERMES_HOME/.env`) | wallet balance USD |
-| DeepInfra | `deepinfra` | `DEEPINFRA_API_KEY` (env / `$HERMES_HOME/.env`) | prepaid pool, month spend |
+| DeepSeek official | `deepseek` | `DEEPSEEK_API_KEY` (env / agent env file) | wallet balance USD |
+| DeepInfra | `deepinfra` | `DEEPINFRA_API_KEY` (env / agent env file) | prepaid pool, month spend |
 | Codex (ChatGPT) | `codex` | `~/.codex/auth.json` (Codex CLI, read-only) | credits + rate-limit window |
 | Grok (xAI) | `grok` | `~/.grok/auth.json` (Grok CLI, read-only) | monthly credits + prepaid |
 | Xiaomi MiMo | `mimo` | `MIMO_COOKIE` env, else CodexBar fallback | CNY balance + plan |
@@ -53,14 +55,23 @@ login/setup URL instead of failing the whole run.
 ## Credential resolution (per provider, in order)
 
 1. Process environment variable
-2. `$HERMES_HOME/.env` (if you run Hermes Agent; never exported)
+2. Your agent's env file (e.g. Hermes's `$HERMES_HOME/.env`; never exported)
 3. Local CLI auth store (`~/.codex/auth.json`, `~/.grok/auth.json`) — **read-only**
 4. CodexBar CLI (macOS menu-bar app) for web-session providers
 5. Interactive fallback: the tool prints the login URL and exits non-zero
 
-Security rules baked in: OAuth access tokens are never refreshed or rewritten
-(re-refreshing would rotate the CLI's own refresh token and log you out),
-secrets are never echoed in output or `--json`, and there is no telemetry.
+Security rules baked into the code: OAuth access tokens are never refreshed or
+rewritten (re-refreshing would rotate the CLI's own refresh token and log you
+out), secrets are never echoed in any output mode, and there is no telemetry.
+
+## Evidence
+
+| Capability | How it was verified |
+|---|---|
+| Balance semantics correct | Cross-checked against an independent implementation (legacy Python direct-connect scripts) on the same endpoints: DeepSeek balance and DeepInfra spendable/month matched exactly |
+| Trend algorithm | 40 fixture tests cover 7-day least-squares, reset clipping, LOW thresholds (`bun test`) |
+| Endpoint reality | Live-verified against DeepSeek `GET /user/balance` ([platform.deepseek.com](https://platform.deepseek.com)), DeepInfra `/payment/checklist` ([deepinfra.com/dash](https://deepinfra.com/dash)) and the other providers' billing surfaces |
+| Type safety | TypeScript strict `tsc --noEmit`, zero errors |
 
 ## JSON snapshot schema
 
@@ -88,6 +99,24 @@ a 7-day window, clips quota series before the last reset, and flags low
 balances (USD wallet < 5, or < 20% remaining). Use `--no-log` to skip
 appending.
 
+## Repo layout
+
+```
+SKILL.md            # skill entry (frontmatter, ≤60-char description)
+src/
+  cli.ts            # CLI entry
+  types.ts          # unified snapshot schema + Provider interface
+  core/             # env/http/auth/codexbar/trend/log/format
+  providers/        # one adapter per provider
+  registry.ts       # 10-provider registry
+test/               # bun:test fixtures (no live API calls)
+docs/MIGRATION.md   # endpoint semantics + unit pitfalls
+README.zh-CN.md     # Chinese version of this file
+```
+
+Adding a provider = one file in `src/providers/` implementing the `Provider`
+interface (`detect()` + `fetch()`), one registry entry in `src/registry.ts`.
+
 ## Development
 
 ```bash
@@ -95,9 +124,6 @@ bun run typecheck   # tsc --noEmit, strict
 bun test            # fixture-based unit tests (no live API calls)
 bun run build       # single-file binary
 ```
-
-Adding a provider = one file in `src/providers/` implementing the `Provider`
-interface (`detect()` + `fetch()`), one registry entry in `src/registry.ts`.
 
 ## License
 

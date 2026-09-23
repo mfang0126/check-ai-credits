@@ -1,7 +1,7 @@
 # Migration map: Python scripts → check-ai-credits
 
 Reference while porting. Source of truth for endpoint semantics:
-`~/.hermes/scripts/*.py` (read-only; never modified by this project).
+the legacy Python balance scripts (read-only; never modified by this project).
 
 | Provider | Python source | TS target | Status |
 |---|---|---|---|

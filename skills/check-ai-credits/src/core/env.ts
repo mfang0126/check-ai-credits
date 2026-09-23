@@ -8,7 +8,7 @@ export function hermesHome(): string {
 
 /** Read one key from the process env, then $HERMES_HOME/.env (never exported). */
 export function hermesEnv(name: string): string | undefined {
-  const fromProcess = process.env[name];
+  const fromProcess = Bun.env[name];
   if (fromProcess) return fromProcess;
   try {
     const lines = fs.readFileSync(join(hermesHome(), ".env"), "utf8").split("\n");

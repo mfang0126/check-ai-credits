@@ -8,22 +8,22 @@ const tmp = fs.mkdtempSync(path.join(process.env.TMPDIR ?? os.tmpdir(), "caic-en
 const KEY = "CAIC_TEST_KEY_DO_NOT_USE";
 
 afterAll(() => {
-  delete process.env[KEY];
+  delete process.env.CAIC_TEST_KEY_DO_NOT_USE;
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 
 describe("hermesEnv", () => {
   test("reads from $HERMES_HOME/.env when not in process env", () => {
-    delete process.env[KEY];
+    delete process.env.CAIC_TEST_KEY_DO_NOT_USE;
     fs.writeFileSync(path.join(tmp, ".env"), `${KEY}="from-file-value"\nOTHER=1\n`, "utf8");
     process.env.HERMES_HOME = tmp;
     expect(hermesEnv(KEY)).toBe("from-file-value");
   });
 
   test("process env takes precedence over .env file", () => {
-    process.env[KEY] = "from-process";
+    process.env.CAIC_TEST_KEY_DO_NOT_USE = "from-process";
     expect(hermesEnv(KEY)).toBe("from-process");
-    delete process.env[KEY];
+    delete process.env.CAIC_TEST_KEY_DO_NOT_USE;
   });
 
   test("missing key -> undefined", () => {

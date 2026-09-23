@@ -19,7 +19,7 @@ apikey.fun relay — with burn trend and estimated days-left.
 npx skills add mfang0126/check-ai-credits
 
 # from source (requires Bun >= 1.1)
-git clone git@github.com:mfang0126/check-ai-credits.git
+# clone this repository (ssh or https), then:
 cd check-ai-credits && bun install && bun run build   # -> dist/check-ai-credits
 ```
 

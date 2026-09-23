@@ -3,3 +3,5 @@ dist/
 *.log
 .DS_Store
 local-log.json
+*.bun-build
+.bun-build

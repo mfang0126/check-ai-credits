@@ -19,7 +19,7 @@ OpenRouter、apikey.fun，附带烧钱趋势和预计可用天数。
 npx skills add mfang0126/check-ai-credits
 
 # 从源码构建（需要 Bun >= 1.1）
-git clone git@github.com:mfang0126/check-ai-credits.git
+# 克隆本仓库（ssh 或 https 均可），然后：
 cd check-ai-credits && bun install && bun run build   # -> dist/check-ai-credits
 ```
 
